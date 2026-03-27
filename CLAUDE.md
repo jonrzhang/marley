@@ -35,3 +35,6 @@ Demonstrates concurrent file scanning with goroutines and channels. Has two pack
 - `queue/queue.go` — thread-safe queue wrapping `container/list.List` with `sync.Mutex`
 
 The scanfile module has a hardcoded macOS path (`/Users/zhangrong/Downloads/Images/Cropped`) that needs to be changed for local use.
+
+### `mqtt/`
+Demonstrates MQTT pub/sub with `github.com/eclipse/paho.mqtt.golang`. Connects to a public broker (`broker.emqx.io:1883`), subscribes to a topic, publishes 5 messages, and uses `sync.WaitGroup` to wait for all messages to be received before disconnecting.
