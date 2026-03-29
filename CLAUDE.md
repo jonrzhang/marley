@@ -58,3 +58,14 @@ Each of the following modules demonstrates a core Go feature through a realistic
 | `cgo/` | Cgo | System resource monitor via C sysinfo() |
 
 Run any example: `cd <module> && go run main.go`
+
+## Documentation
+
+The `doc/` directory contains detailed explanations for every module, in both English and Chinese:
+
+```
+doc/<module>_en.md   — English
+doc/<module>_zh.md   — Chinese
+```
+
+Covers: implementation logic, code walkthrough, key concepts, and when-to-use guidance.
