@@ -30,3 +30,4 @@ Each module demonstrates a core Go feature through a realistic scenario:
 | `embedding/` | Struct embedding | User permission system |
 | `context/` | Context | HTTP API client with timeout/cancellation |
 | `generics/` | Generics | Type-safe in-memory cache with TTL |
+| `cgo/` | Cgo | System resource monitor via C sysinfo() |

@@ -55,5 +55,6 @@ Each of the following modules demonstrates a core Go feature through a realistic
 | `embedding/` | Struct embedding | User permission system (BaseUser → AdminUser) |
 | `context/` | Context | HTTP API client with timeout and cancellation |
 | `generics/` | Generics | Type-safe in-memory cache with TTL |
+| `cgo/` | Cgo | System resource monitor via C sysinfo() |
 
 Run any example: `cd <module> && go run main.go`

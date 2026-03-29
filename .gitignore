@@ -25,3 +25,4 @@ closure/closure
 embedding/embedding
 context/context
 generics/generics
+cgo/cgo
