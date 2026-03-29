@@ -1,5 +1,5 @@
 // 场景：服务健康检查
-// 同时探测多个服务，哪个先响应就用哪个，超过阈值则报告不可用
+// 同时探测多个服务，在超时范围内收集尽可能多的结果，超时的标记为不可用
 package main
 
 import (
@@ -28,54 +28,15 @@ func probe(service string, latency time.Duration) <-chan HealthResult {
 	return ch
 }
 
-func checkAll(services map[string]time.Duration, timeout time.Duration) {
-	type result struct {
-		name string
-		ch   <-chan HealthResult
+// fanIn 把多个 channel 汇聚到一个
+func fanIn(channels ...<-chan HealthResult) <-chan HealthResult {
+	merged := make(chan HealthResult, len(channels))
+	for _, ch := range channels {
+		go func(c <-chan HealthResult) {
+			merged <- <-c
+		}(ch)
 	}
-
-	probes := make([]result, 0, len(services))
-	for name, latency := range services {
-		probes = append(probes, result{name, probe(name, latency)})
-	}
-
-	deadline := time.After(timeout)
-	received := 0
-
-	for received < len(probes) {
-		// select 动态等待所有 channel，超时则放弃
-		select {
-		case r := <-probes[0].ch:
-			printResult(r)
-			probes = probes[1:]
-			received++
-		case r := <-probes[min(1, len(probes)-1)].ch:
-			printResult(r)
-			if len(probes) > 1 {
-				probes = append(probes[:1], probes[2:]...)
-			}
-			received++
-		case <-deadline:
-			fmt.Printf("[TIMEOUT] %d service(s) did not respond within %v\n",
-				len(probes)-received, timeout)
-			return
-		}
-	}
-}
-
-func printResult(r HealthResult) {
-	status := "UP"
-	if !r.Healthy {
-		status = "DOWN"
-	}
-	fmt.Printf("[%-4s] %-20s latency=%v\n", status, r.Service, r.Latency.Round(time.Millisecond))
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
+	return merged
 }
 
 func main() {
@@ -86,6 +47,30 @@ func main() {
 		"slow-service":    600 * time.Millisecond, // 会超时
 	}
 
+	// 启动所有探测，汇聚到一个 channel
+	var probes []<-chan HealthResult
+	for name, latency := range services {
+		probes = append(probes, probe(name, latency))
+	}
+	results := fanIn(probes...)
+
+	// select 等待结果或超时
+	timeout := time.After(500 * time.Millisecond)
+	received := 0
+
 	fmt.Println("Checking services (timeout=500ms)...")
-	checkAll(services, 500*time.Millisecond)
+	for received < len(services) {
+		select {
+		case r := <-results:
+			status := "UP"
+			if !r.Healthy {
+				status = "DOWN"
+			}
+			fmt.Printf("[%-4s] %-20s latency=%v\n", status, r.Service, r.Latency.Round(time.Millisecond))
+			received++
+		case <-timeout:
+			fmt.Printf("[TIMEOUT] %d service(s) did not respond within 500ms\n", len(services)-received)
+			return
+		}
+	}
 }
