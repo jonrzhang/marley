@@ -38,3 +38,22 @@ The scanfile module has a hardcoded macOS path (`/Users/zhangrong/Downloads/Imag
 
 ### `mqtt/`
 Demonstrates MQTT pub/sub with `github.com/eclipse/paho.mqtt.golang`. Connects to a public broker (`broker.emqx.io:1883`), subscribes to a topic, publishes 5 messages, and uses `sync.WaitGroup` to wait for all messages to be received before disconnecting.
+
+## Go Feature Examples
+
+Each of the following modules demonstrates a core Go feature through a realistic application scenario:
+
+| Module | Feature | Scenario |
+|--------|---------|---------|
+| `goroutine/` | Goroutines + WaitGroup | Parallel image downloading |
+| `channel/` | Channels + Pipeline | Log processing pipeline (read→parse→write) |
+| `select/` | Select statement | Multi-service health checker with timeout |
+| `defer/` | Defer | Database transaction auto commit/rollback |
+| `interface/` | Interfaces | Notification system (Email/SMS/Push) |
+| `errors/` | Error wrapping | Config file parser with errors.Is/As |
+| `closure/` | Closures | HTTP middleware chain (auth, logging, rate limit) |
+| `embedding/` | Struct embedding | User permission system (BaseUser → AdminUser) |
+| `context/` | Context | HTTP API client with timeout and cancellation |
+| `generics/` | Generics | Type-safe in-memory cache with TTL |
+
+Run any example: `cd <module> && go run main.go`
