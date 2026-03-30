@@ -1,0 +1,11 @@
+title: "Marley — Go Learning Examples"
+description: "Bilingual documentation (EN/ZH) for Go feature examples and core concepts."
+theme: jekyll-theme-cayman
+
+# Apply default layout to all markdown pages
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
